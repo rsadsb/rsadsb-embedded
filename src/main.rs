@@ -9,10 +9,13 @@
 use panic_semihosting as _;
 
 use stm32f3xx_hal as hal;
+use core::clone::Clone;
+use core::ops::FnOnce;
 
 use cortex_m_rt::entry;
 use hal::pac;
 use hal::prelude::*;
+use deku::prelude::*;
 
 #[entry]
 fn main() -> ! {

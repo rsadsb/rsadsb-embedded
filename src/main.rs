@@ -6,7 +6,6 @@
 #![feature(alloc_error_handler)]
 
 extern crate alloc;
-use self::alloc::vec;
 
 // core
 use core::alloc::Layout;
@@ -20,9 +19,9 @@ use cortex_m_rt::entry;
 use hal::pac;
 use hal::prelude::*;
 use hexlit::hex;
+use rtt_target::{rtt_init_print, rprintln};
 
 use stm32f3xx_hal as hal;
-
 use panic_semihosting as _;
 
 // this is the allocator the application will use
@@ -42,12 +41,9 @@ fn alloc_error(_layout: Layout) -> ! {
 #[entry]
 fn main() -> ! {
     unsafe { ALLOCATOR.init(cortex_m_rt::heap_start() as usize, HEAP_SIZE) }
+    rtt_init_print!();
+
     let dp = pac::Peripherals::take().unwrap();
-
-    let v = vec![1_000_000, 2_000_000, 8_000_000];
-
-    let bytes = hex!("8D40621D58C382D690C8AC2863A7");
-    let frame = Frame::from_bytes((&bytes, 0));
 
     let mut rcc = dp.RCC.constrain();
     let mut gpioe = dp.GPIOE.split(&mut rcc.ahb);
@@ -59,18 +55,19 @@ fn main() -> ! {
     led.set_low().unwrap();
 
     loop {
-        for t in &v {
-            led.toggle().unwrap();
-            cortex_m::asm::delay(*t);
-            // Toggle by hand.
-            // Uses `StatefulOutputPin` instead of `ToggleableOutputPin`.
-            // Logically it is the same.
-            if led.is_set_low().unwrap() {
-                led.set_high().unwrap();
-            } else {
-                led.set_low().unwrap();
-            }
-            cortex_m::asm::delay(*t);
+        led.toggle().unwrap();
+        let bytes = hex!("8D40621D58C382D690C8AC2863A7");
+        let frame = Frame::from_bytes((&bytes, 0));
+        rprintln!("{}", frame.unwrap().1);
+        //cortex_m::asm::delay(*t);
+        // Toggle by hand.
+        // Uses `StatefulOutputPin` instead of `ToggleableOutputPin`.
+        // Logically it is the same.
+        if led.is_set_low().unwrap() {
+            led.set_high().unwrap();
+        } else {
+            led.set_low().unwrap();
         }
+        //cortex_m::asm::delay(*t);
     }
 }

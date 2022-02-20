@@ -3,6 +3,14 @@
 version = 3
 
 [[package]]
+name = "adsb_deku"
+version = "0.5.1"
+dependencies = [
+ "deku",
+ "libm",
+]
+
+[[package]]
 name = "alloc-cortex-m"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -201,10 +209,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1847abb9cb65d566acd5942e94aea9c8f547ad02c98e1649326fc0e8910b8b1e"
 
 [[package]]
+name = "hexlit"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2004324a8c06e9870981595cda152497db8a49e12c944f99cefab2045136b0b"
+
+[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
+
+[[package]]
+name = "libm"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "33a33a362ce288760ec6a508b94caaec573ae7d3bbbd91b87aa0bad4456839db"
 
 [[package]]
 name = "linked_list_allocator"
@@ -340,10 +360,11 @@ checksum = "643f8f41a8ebc4c5dc4515c82bb8abd397b527fc20fd681b7c011c2aee5d44fb"
 name = "rsadsb-embedded"
 version = "0.1.0"
 dependencies = [
+ "adsb_deku",
  "alloc-cortex-m",
  "cortex-m",
  "cortex-m-rt",
- "deku",
+ "hexlit",
  "panic-semihosting",
  "stm32f3xx-hal",
 ]

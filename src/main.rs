@@ -12,12 +12,15 @@ use self::alloc::vec;
 use core::alloc::Layout;
 
 // third party
+use adsb_deku::deku::DekuContainerRead;
+use adsb_deku::Frame;
 use alloc_cortex_m::CortexMHeap;
 use cortex_m::asm;
 use cortex_m_rt::entry;
-use deku::prelude::*;
 use hal::pac;
 use hal::prelude::*;
+use hexlit::hex;
+
 use stm32f3xx_hal as hal;
 
 use panic_semihosting as _;
@@ -42,6 +45,9 @@ fn main() -> ! {
     let dp = pac::Peripherals::take().unwrap();
 
     let v = vec![1_000_000, 2_000_000, 8_000_000];
+
+    let bytes = hex!("8D40621D58C382D690C8AC2863A7");
+    let frame = Frame::from_bytes((&bytes, 0));
 
     let mut rcc = dp.RCC.constrain();
     let mut gpioe = dp.GPIOE.split(&mut rcc.ahb);

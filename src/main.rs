@@ -1,25 +1,47 @@
 //! Uses the StatefulOutputPin embedded_hal trait to toggle the pin
 //! On the stm32 discovery board this is the "south" led
 //! Target board: STM32F3DISCOVERY
-
-#![deny(unsafe_code)]
 #![no_main]
 #![no_std]
+#![feature(alloc_error_handler)]
+
+extern crate alloc;
+use self::alloc::vec;
+
+// core
+use core::alloc::Layout;
+
+// third party
+use alloc_cortex_m::CortexMHeap;
+use cortex_m::asm;
+use cortex_m_rt::entry;
+use deku::prelude::*;
+use hal::pac;
+use hal::prelude::*;
+use stm32f3xx_hal as hal;
 
 use panic_semihosting as _;
 
-use stm32f3xx_hal as hal;
-use core::clone::Clone;
-use core::ops::FnOnce;
+// this is the allocator the application will use
+#[global_allocator]
+static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
 
-use cortex_m_rt::entry;
-use hal::pac;
-use hal::prelude::*;
-use deku::prelude::*;
+const HEAP_SIZE: usize = 1024; // in bytes
+
+// define what happens in an Out Of Memory (OOM) condition
+#[alloc_error_handler]
+fn alloc_error(_layout: Layout) -> ! {
+    asm::bkpt();
+
+    loop {}
+}
 
 #[entry]
 fn main() -> ! {
+    unsafe { ALLOCATOR.init(cortex_m_rt::heap_start() as usize, HEAP_SIZE) }
     let dp = pac::Peripherals::take().unwrap();
+
+    let v = vec![1_000_000, 2_000_000, 8_000_000];
 
     let mut rcc = dp.RCC.constrain();
     let mut gpioe = dp.GPIOE.split(&mut rcc.ahb);
@@ -31,16 +53,18 @@ fn main() -> ! {
     led.set_low().unwrap();
 
     loop {
-        led.toggle().unwrap();
-        cortex_m::asm::delay(8_000_000);
-        // Toggle by hand.
-        // Uses `StatefulOutputPin` instead of `ToggleableOutputPin`.
-        // Logically it is the same.
-        if led.is_set_low().unwrap() {
-            led.set_high().unwrap();
-        } else {
-            led.set_low().unwrap();
+        for t in &v {
+            led.toggle().unwrap();
+            cortex_m::asm::delay(*t);
+            // Toggle by hand.
+            // Uses `StatefulOutputPin` instead of `ToggleableOutputPin`.
+            // Logically it is the same.
+            if led.is_set_low().unwrap() {
+                led.set_high().unwrap();
+            } else {
+                led.set_low().unwrap();
+            }
+            cortex_m::asm::delay(*t);
         }
-        cortex_m::asm::delay(8_000_000);
     }
 }

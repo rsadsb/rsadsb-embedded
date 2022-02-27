@@ -18,7 +18,7 @@ use cortex_m::{asm, singleton};
 use cortex_m_rt::entry;
 use hal::prelude::*;
 use hal::{pac, serial::Serial};
-use hexlit::hex;
+
 use rtt_target::{rprintln, rtt_init_print};
 
 // this is the allocator the application will use
@@ -66,14 +66,14 @@ fn main() -> ! {
             .into_af_push_pull(&mut gpioa.moder, &mut gpioa.otyper, &mut gpioa.afrh),
     );
 
-    let mut serial = Serial::new(dp.USART1, pins, 9600.Bd(), clocks, &mut rcc.apb2);
+    let serial = Serial::new(dp.USART1, pins, 9600.Bd(), clocks, &mut rcc.apb2);
 
-    let (tx, mut rx) = serial.split();
+    let (_tx, rx) = serial.split();
 
     let dma1 = dp.DMA1.split(&mut rcc.ahb);
 
     // DMA channel selection depends on the peripheral:
-    let (tx_channel, rx_channel) = (dma1.ch4, dma1.ch5);
+    let (_tx_channel, rx_channel) = (dma1.ch4, dma1.ch5);
 
     //let tx_buf = singleton!(: [u8; 14] = [0; 14]).unwrap();
     let rx_buf = singleton!(: [u8; 14] = [0; 14]).unwrap();

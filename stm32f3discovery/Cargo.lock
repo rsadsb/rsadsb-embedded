@@ -253,12 +253,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1847abb9cb65d566acd5942e94aea9c8f547ad02c98e1649326fc0e8910b8b1e"
 
 [[package]]
-name = "hexlit"
-version = "0.5.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2004324a8c06e9870981595cda152497db8a49e12c944f99cefab2045136b0b"
-
-[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -402,7 +396,6 @@ dependencies = [
  "alloc-cortex-m",
  "cortex-m",
  "cortex-m-rt",
- "hexlit",
  "panic-semihosting",
  "rtt-target",
  "stm32f3xx-hal",

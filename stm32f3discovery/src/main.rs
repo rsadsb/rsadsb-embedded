@@ -4,8 +4,8 @@
 
 extern crate alloc;
 
-use stm32f3xx_hal as hal;
 use panic_semihosting as _;
+use stm32f3xx_hal as hal;
 
 // core
 use core::alloc::Layout;
@@ -16,10 +16,10 @@ use adsb_deku::Frame;
 use alloc_cortex_m::CortexMHeap;
 use cortex_m::{asm, singleton};
 use cortex_m_rt::entry;
-use hal::{pac, serial::Serial};
 use hal::prelude::*;
+use hal::{pac, serial::Serial};
 use hexlit::hex;
-use rtt_target::{rtt_init_print, rprintln};
+use rtt_target::{rprintln, rtt_init_print};
 
 // this is the allocator the application will use
 #[global_allocator]
@@ -51,7 +51,6 @@ fn main() -> ! {
 
     led.set_low().unwrap();
 
-
     let mut flash = dp.FLASH.constrain();
 
     let clocks = rcc.cfgr.freeze(&mut flash.acr);
@@ -64,7 +63,7 @@ fn main() -> ! {
             .into_af_push_pull(&mut gpioa.moder, &mut gpioa.otyper, &mut gpioa.afrh),
         gpioa
             .pa10
-            .into_af_push_pull(&mut gpioa.moder, &mut gpioa.otyper, &mut gpioa.afrh)
+            .into_af_push_pull(&mut gpioa.moder, &mut gpioa.otyper, &mut gpioa.afrh),
     );
 
     let mut serial = Serial::new(dp.USART1, pins, 9600.Bd(), clocks, &mut rcc.apb2);
@@ -72,7 +71,6 @@ fn main() -> ! {
     let (tx, mut rx) = serial.split();
 
     let dma1 = dp.DMA1.split(&mut rcc.ahb);
-
 
     // DMA channel selection depends on the peripheral:
     let (tx_channel, rx_channel) = (dma1.ch4, dma1.ch5);
@@ -85,7 +83,6 @@ fn main() -> ! {
     let mut recv = (rx_buf, rx_channel, rx);
 
     loop {
-
         //let (tx_buf, tx_channel, tx) = send;
         let (rx_buf, rx_channel, rx) = recv;
 
@@ -105,6 +102,5 @@ fn main() -> ! {
         } else {
             led.set_low().unwrap();
         }
-
     }
 }

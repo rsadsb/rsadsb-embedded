@@ -75,20 +75,14 @@ fn main() -> ! {
     // DMA channel selection depends on the peripheral:
     let (_tx_channel, rx_channel) = (dma1.ch4, dma1.ch5);
 
-    //let tx_buf = singleton!(: [u8; 14] = [0; 14]).unwrap();
     let rx_buf = singleton!(: [u8; 14] = [0; 14]).unwrap();
 
-    //let rx_buf = alloc::vec![0; 14];
-    //let mut send = (tx_buf, tx_channel, tx);
     let mut recv = (rx_buf, rx_channel, rx);
 
     loop {
-        //let (tx_buf, tx_channel, tx) = send;
         let (rx_buf, rx_channel, rx) = recv;
 
-        //let sending = tx.write_all(tx_buf, tx_channel);
         let receiving = rx.read_exact(rx_buf, rx_channel);
-        //send = sending.wait();
         recv = receiving.wait();
         rprintln!("message: {:x?}", recv.0);
 

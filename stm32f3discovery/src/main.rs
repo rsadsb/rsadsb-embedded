@@ -4,7 +4,7 @@
 
 extern crate alloc;
 
-use panic_semihosting as _;
+use panic_rtt_target as _;
 use stm32f3xx_hal as hal;
 
 // core

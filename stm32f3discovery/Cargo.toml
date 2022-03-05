@@ -9,7 +9,10 @@ edition = "2021"
 cortex-m = "0.7.4"
 cortex-m-rt = "0.7"
 alloc-cortex-m = "*"
-panic-semihosting = "0.5.6"
+
+[dependencies.panic-rtt-target]
+version = "0.1.2"
+features = ["cortex-m"]
 
 [dependencies.rtt-target]
 version = "0.3.1"

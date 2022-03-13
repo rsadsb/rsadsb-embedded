@@ -1,8 +1,8 @@
 [default.general]
-chip = "STM32F303VCTx"
+chip = "nrf52833"
 
 [default.rtt]
-enabled = false
+enabled = true
 
 [default.gdb]
 enabled = true

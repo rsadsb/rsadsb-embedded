@@ -1,0 +1,25 @@
+[package]
+name = "blah"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies.microbit-v2]
+version = "0.12.0"
+git = "https://github.com/nrf-rs/microbit/"
+
+[dependencies.adsb_deku]
+version = "*"
+git = "https://github.com/rsadsb/adsb_deku"
+branch = "add-no-std-support"
+default-features = false
+features = ["alloc"]
+
+[dependencies]
+cortex-m = "0.7.4"
+cortex-m-rt = "0.7"
+alloc-cortex-m = "*"
+rtt-target = { version = "0.3.1", features = ["cortex-m"] }
+panic-rtt-target = { version = "0.1.2", features = ["cortex-m"] }
+nb = "1.0.0"
+heapless = "0.7.10"
+embedded-hal = "0.2.6"

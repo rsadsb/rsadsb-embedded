@@ -91,6 +91,7 @@ fn main() -> ! {
         if let Ok(frame) = Frame::from_bytes((recv.0, 0)) {
             rprintln!("{}", frame.1);
         }
+        rprintln!("after");
         if led.is_set_low().unwrap() {
             led.set_high().unwrap();
         } else {

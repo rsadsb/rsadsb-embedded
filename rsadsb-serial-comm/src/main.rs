@@ -33,7 +33,7 @@ struct Options {
 fn main() {
     let options = Options::parse();
 
-    let mut port = serialport::new("/dev/ttyUSB0", 9600)
+    let mut port = serialport::new("/dev/ttyACM0", 115200)
         .timeout(Duration::from_millis(10))
         .data_bits(DataBits::Eight)
         .parity(Parity::None)
@@ -70,9 +70,6 @@ fn main() {
 
             port.write_all(&bytes).unwrap();
             std::thread::sleep(std::time::Duration::from_secs(1));
-            //for byte in &bytes {
-            //    port.write(&[*byte]).unwrap();
-            //}
 
             input.clear();
         }

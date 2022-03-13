@@ -2,16 +2,16 @@
 #![no_std]
 #![feature(alloc_error_handler)]
 
-use cortex_m_rt::entry;
-use core::fmt::Write;
-use heapless::Vec;
-use rtt_target::{rtt_init_print, rprintln};
-use panic_rtt_target as _;
-use adsb_deku::Frame;
 use adsb_deku::deku::DekuContainerRead;
+use adsb_deku::Frame;
 use alloc_cortex_m::CortexMHeap;
-use cortex_m::asm;
 use core::alloc::Layout;
+use core::fmt::Write;
+use cortex_m::asm;
+use cortex_m_rt::entry;
+use heapless::Vec;
+use panic_rtt_target as _;
+use rtt_target::{rprintln, rtt_init_print};
 
 use microbit::{
     hal::prelude::*,
@@ -39,6 +39,11 @@ fn main() -> ! {
     rtt_init_print!();
     let board = microbit::Board::take().unwrap();
 
+    use core::mem::MaybeUninit;
+    const HEAP_SIZE: usize = 2048;
+    static mut HEAP: [MaybeUninit<u8>; HEAP_SIZE] = [MaybeUninit::uninit(); HEAP_SIZE];
+    unsafe { ALLOCATOR.init((&mut HEAP).as_ptr() as usize, HEAP_SIZE) }
+
     let mut serial = {
         let serial = uarte::Uarte::new(
             board.UARTE0,
@@ -60,11 +65,11 @@ fn main() -> ! {
             write!(serial, "error: buffer full\r\n").unwrap();
         }
 
-        rprintln!("{:x?}", buffer);
         if buffer.len() == 14 {
-            rprintln!("before");
-            if let Ok(frame) = Frame::from_bytes((&buffer, 0)) {
-                rprintln!("{}", frame.1);
+            rprintln!("bytes: {:x?}", buffer);
+            match Frame::from_bytes((&buffer, 0)) {
+                Ok(frame) => rprintln!("{}", frame.1),
+                Err(e) => rprintln!("{:?}", e),
             }
             buffer.clear();
         }

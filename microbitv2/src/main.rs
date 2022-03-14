@@ -4,15 +4,15 @@
 
 use adsb_deku::deku::DekuContainerRead;
 use adsb_deku::Frame;
-use rsadsb_common::Airplanes;
 use alloc_cortex_m::CortexMHeap;
 use core::alloc::Layout;
-use core::mem::MaybeUninit;
 use core::fmt::Write;
+use core::mem::MaybeUninit;
 use cortex_m::asm;
 use cortex_m_rt::entry;
 use heapless::Vec;
 use panic_rtt_target as _;
+use rsadsb_common::Airplanes;
 use rtt_target::{rprintln, rtt_init_print};
 
 use microbit::{
@@ -82,7 +82,7 @@ fn main() -> ! {
                             rprintln!("[{}], {} km", key, distance);
                         }
                     }
-                },
+                }
                 Err(e) => rprintln!("[!] ERROR: {:?}", e),
             }
             buffer.clear();

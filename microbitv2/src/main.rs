@@ -11,20 +11,22 @@ use core::mem::MaybeUninit;
 use cortex_m::asm;
 use cortex_m_rt::entry;
 use heapless::Vec;
+use microbit::{
+    board::Board,
+    display::blocking::Display,
+    hal::prelude::*,
+    hal::uarte,
+    hal::uarte::{Baudrate, Parity},
+    hal::Timer,
+};
 use panic_rtt_target as _;
 use rsadsb_common::Airplanes;
 use rtt_target::{rprintln, rtt_init_print};
 
-use microbit::{
-    hal::prelude::*,
-    hal::uarte,
-    hal::uarte::{Baudrate, Parity},
-};
-
 mod serial_setup;
 use serial_setup::UartePort;
 
-const HEAP_SIZE: usize = 4096*2;
+const HEAP_SIZE: usize = 4096 * 2;
 
 const LAT: f64 = 0;
 const LONG: f64 = 0;
@@ -49,7 +51,8 @@ fn main() -> ! {
     unsafe { ALLOCATOR.init((&mut HEAP).as_ptr() as usize, HEAP_SIZE) }
     let mut adsb_airplanes = Airplanes::new();
 
-    let board = microbit::Board::take().unwrap();
+    let board = Board::take().unwrap();
+    let mut timer = Timer::new(board.TIMER0);
     let mut serial = {
         let serial = uarte::Uarte::new(
             board.UARTE0,
@@ -60,9 +63,17 @@ fn main() -> ! {
         UartePort::new(serial)
     };
 
-    let mut buffer: Vec<u8, 14> = Vec::new();
+    let mut display = Display::new(board.display_pins);
 
+    let mut buffer: Vec<u8, 14> = Vec::new();
     loop {
+        let mut leds = [
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+        ];
         // We assume that the receiving cannot fail
         let byte = nb::block!(serial.read()).unwrap();
 
@@ -71,15 +82,52 @@ fn main() -> ! {
         }
 
         if buffer.len() == 14 {
-            rprintln!("bytes: {:x?}", buffer);
+            //rprintln!("bytes: {:x?}", buffer);
             match Frame::from_bytes((&buffer, 0)) {
                 Ok(frame) => {
-                    rprintln!("{}", frame.1);
-                    rprintln!("!: {:?}", adsb_airplanes.0.keys());
+                    //rprintln!("{}", frame.1);
                     adsb_airplanes.action(frame.1, (LAT, LONG));
+                    let mut save_position = (None, 400.0);
                     for (key, value) in &adsb_airplanes.0 {
-                        if let Some(distance) = value.coords.kilo_distance {
-                            rprintln!("[{}], {} km", key, distance);
+                        //rprintln!("{}", key);
+                        // save smallest heading key
+                        if let Some(kilo_distance) = value.coords.kilo_distance {
+                            if kilo_distance < save_position.1 {
+                                save_position = (Some(key), kilo_distance);
+                            }
+                        }
+                    }
+                    //rprintln!("{:?}", save_position);
+                    if save_position.0.is_some() {
+                        //rprintln!("{} {}", save_position.0.unwrap(), save_position.1);
+                        let position = adsb_airplanes
+                            .0
+                            .get(save_position.0.unwrap())
+                            .unwrap()
+                            .coords
+                            .position;
+                        if let Some(position) = position {
+                            rprintln!(
+                                "[{}] {:.3} {:.3}",
+                                save_position.0.unwrap(),
+                                position.latitude,
+                                position.longitude
+                            );
+                            let (lat, long) = (position.latitude, position.longitude);
+
+                            let lat_g = lat > LAT;
+                            let long_g = long > LONG;
+
+                            if lat_g && long_g {
+                                leds[0][4] = 1;
+                            } else if lat_g && !long_g {
+                                leds[4][4] = 1;
+                            } else if !lat_g && long_g {
+                                leds[0][0] = 1;
+                            } else if !lat_g && !lat_g {
+                                leds[4][0] = 1;
+                            }
+                            display.show(&mut timer, leds, 10);
                         }
                     }
                 }

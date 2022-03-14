@@ -69,7 +69,7 @@ fn main() {
             }
 
             port.write_all(&bytes).unwrap();
-            std::thread::sleep(std::time::Duration::from_millis(100));
+            std::thread::sleep(std::time::Duration::from_millis(50));
 
             input.clear();
         }

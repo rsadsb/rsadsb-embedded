@@ -4,8 +4,10 @@
 
 use adsb_deku::deku::DekuContainerRead;
 use adsb_deku::Frame;
+use rsadsb_common::Airplanes;
 use alloc_cortex_m::CortexMHeap;
 use core::alloc::Layout;
+use core::mem::MaybeUninit;
 use core::fmt::Write;
 use cortex_m::asm;
 use cortex_m_rt::entry;
@@ -22,6 +24,11 @@ use microbit::{
 mod serial_setup;
 use serial_setup::UartePort;
 
+const HEAP_SIZE: usize = 4096*2;
+
+const LAT: f64 = 0;
+const LONG: f64 = 0;
+
 // this is the allocator the application will use
 #[global_allocator]
 static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
@@ -37,13 +44,12 @@ fn alloc_error(_layout: Layout) -> ! {
 #[entry]
 fn main() -> ! {
     rtt_init_print!();
-    let board = microbit::Board::take().unwrap();
 
-    use core::mem::MaybeUninit;
-    const HEAP_SIZE: usize = 2048;
     static mut HEAP: [MaybeUninit<u8>; HEAP_SIZE] = [MaybeUninit::uninit(); HEAP_SIZE];
     unsafe { ALLOCATOR.init((&mut HEAP).as_ptr() as usize, HEAP_SIZE) }
+    let mut adsb_airplanes = Airplanes::new();
 
+    let board = microbit::Board::take().unwrap();
     let mut serial = {
         let serial = uarte::Uarte::new(
             board.UARTE0,
@@ -54,7 +60,6 @@ fn main() -> ! {
         UartePort::new(serial)
     };
 
-    // A buffer with 32 bytes of capacity
     let mut buffer: Vec<u8, 14> = Vec::new();
 
     loop {
@@ -68,8 +73,17 @@ fn main() -> ! {
         if buffer.len() == 14 {
             rprintln!("bytes: {:x?}", buffer);
             match Frame::from_bytes((&buffer, 0)) {
-                Ok(frame) => rprintln!("{}", frame.1),
-                Err(e) => rprintln!("{:?}", e),
+                Ok(frame) => {
+                    rprintln!("{}", frame.1);
+                    rprintln!("!: {:?}", adsb_airplanes.0.keys());
+                    adsb_airplanes.action(frame.1, (LAT, LONG));
+                    for (key, value) in &adsb_airplanes.0 {
+                        if let Some(distance) = value.coords.kilo_distance {
+                            rprintln!("[{}], {} km", key, distance);
+                        }
+                    }
+                },
+                Err(e) => rprintln!("[!] ERROR: {:?}", e),
             }
             buffer.clear();
         }

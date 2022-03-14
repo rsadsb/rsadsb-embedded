@@ -25,7 +25,7 @@ use rtt_target::{rprintln, rtt_init_print};
 #[global_allocator]
 static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
 
-const HEAP_SIZE: usize = 1024; // in bytes
+const HEAP_SIZE: usize = 2024; // in bytes
 
 // define what happens in an Out Of Memory (OOM) condition
 #[alloc_error_handler]
@@ -37,8 +37,10 @@ fn alloc_error(_layout: Layout) -> ! {
 
 #[entry]
 fn main() -> ! {
-    unsafe { ALLOCATOR.init(cortex_m_rt::heap_start() as usize, HEAP_SIZE) }
     rtt_init_print!();
+
+    static mut HEAP: [MaybeUninit<u8>; HEAP_SIZE] = [MaybeUninit::uninit(); HEAP_SIZE];
+    unsafe { ALLOCATOR.init((&mut HEAP).as_ptr() as usize, HEAP_SIZE) }
 
     let dp = pac::Peripherals::take().unwrap();
 

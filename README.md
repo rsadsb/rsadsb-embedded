@@ -11,6 +11,17 @@ cd rsadsb-serial-comm
 cargo r
 ```
 
+## bbc microbit-v2
+Display the current position of the closest plane on the led array.
+
+### Usage
+You must install [cargo-embed](https://github.com/probe-rs/cargo-embed) for the flashing of the board with our firmware.
+
+```
+cd microbitv2
+cargo embed --release
+```
+
 ## stm32f3discovery
 Using serial line on the board, show ADS-B packets on the rtt(real-time-terminal) display, flashing the LED when received.
 

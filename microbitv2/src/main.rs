@@ -82,14 +82,11 @@ fn main() -> ! {
         }
 
         if buffer.len() == 14 {
-            //rprintln!("bytes: {:x?}", buffer);
             match Frame::from_bytes((&buffer, 0)) {
                 Ok(frame) => {
-                    //rprintln!("{}", frame.1);
                     adsb_airplanes.action(frame.1, (LAT, LONG));
                     let mut save_position = (None, 400.0);
                     for (key, value) in &adsb_airplanes.0 {
-                        //rprintln!("{}", key);
                         // save smallest heading key
                         if let Some(kilo_distance) = value.coords.kilo_distance {
                             if kilo_distance < save_position.1 {
@@ -97,9 +94,7 @@ fn main() -> ! {
                             }
                         }
                     }
-                    //rprintln!("{:?}", save_position);
                     if save_position.0.is_some() {
-                        //rprintln!("{} {}", save_position.0.unwrap(), save_position.1);
                         let position = adsb_airplanes
                             .0
                             .get(save_position.0.unwrap())
@@ -119,13 +114,17 @@ fn main() -> ! {
                             let long_g = long > LONG;
 
                             if lat_g && long_g {
+                                rprintln!("top right");
                                 leds[0][4] = 1;
                             } else if lat_g && !long_g {
+                                rprintln!("bot right");
                                 leds[4][4] = 1;
                             } else if !lat_g && long_g {
-                                leds[0][0] = 1;
-                            } else if !lat_g && !lat_g {
+                                rprintln!("bot left");
                                 leds[4][0] = 1;
+                            } else if !lat_g && !lat_g {
+                                rprintln!("top left");
+                                leds[0][0] = 1;
                             }
                             display.show(&mut timer, leds, 10);
                         }

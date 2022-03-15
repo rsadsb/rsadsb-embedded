@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "adsb_deku"
 version = "0.5.1"
-source = "git+https://github.com/rsadsb/adsb_deku?branch=add-no-std-support#c328bcddf0551b010727428f63ca34eabe3d11ca"
+source = "git+https://github.com/rsadsb/adsb_deku?branch=add-no-std-support#766dada2313b53097e31b500e1dc5d807143a18d"
 dependencies = [
  "deku",
  "libm",
@@ -517,7 +517,7 @@ dependencies = [
 [[package]]
 name = "rsadsb_common"
 version = "0.5.1"
-source = "git+https://github.com/rsadsb/adsb_deku?branch=add-no-std-support#c328bcddf0551b010727428f63ca34eabe3d11ca"
+source = "git+https://github.com/rsadsb/adsb_deku?branch=add-no-std-support#766dada2313b53097e31b500e1dc5d807143a18d"
 dependencies = [
  "adsb_deku",
  "libm",
@@ -587,9 +587,9 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "syn"
-version = "1.0.86"
+version = "1.0.88"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a65b3f4ffa0092e9887669db0eae07941f023991ab58ea44da8fe8e2d511c6b"
+checksum = "ebd69e719f31e88618baa1eaa6ee2de5c9a1c004f1e9ecdb58e8352a13f20a01"
 dependencies = [
  "proc-macro2",
  "quote",

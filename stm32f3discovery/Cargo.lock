@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "adsb_deku"
 version = "0.5.1"
-source = "git+https://github.com/rsadsb/adsb_deku?branch=add-no-std-support#4b11d8f51f73d39bcd34e10200909c74d7ea5c16"
+source = "git+https://github.com/rsadsb/adsb_deku?branch=add-no-std-support#e5639e03e4bd1b07a806f390025a204285a13b04"
 dependencies = [
  "deku",
  "libm",
@@ -162,9 +162,9 @@ dependencies = [
 
 [[package]]
 name = "deku"
-version = "0.12.5"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6636cb8b0811013ab93bc37b88b460ca637ce3bdc97fb68ca79d7d7df4f16cba"
+checksum = "532b5c81bae1d2b6f251de3918d2511cb927f63c990ab3befbf680f6654953ae"
 dependencies = [
  "bitvec",
  "deku_derive",
@@ -172,9 +172,9 @@ dependencies = [
 
 [[package]]
 name = "deku_derive"
-version = "0.12.5"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9bf7f0f5c5d6b9cc189dea2a0fece14c26a0bbb9df7b52d2fe7b6dd300dae1a0"
+checksum = "3c4bbb40beff5b368edf0127a546c608f83462c31ccfab05d5f0f1f0457e7b16"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -394,9 +394,9 @@ dependencies = [
 
 [[package]]
 name = "rtcc"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef35f9dcbf434a34dcc99b3ebba1c1945d49c70832958e932e83dc63a5273994"
+checksum = "3623619ce77c09a7d87cf7c61c5c887b9c7dee8805f66af6c4aa5824be4d9930"
 dependencies = [
  "chrono",
 ]
@@ -472,8 +472,8 @@ dependencies = [
 
 [[package]]
 name = "stm32f3xx-hal"
-version = "0.8.1"
-source = "git+https://github.com/stm32-rs/stm32f3xx-hal?branch=master#31f34d26adcbc8e6061ff9b03eaebfb8a2979109"
+version = "0.9.0"
+source = "git+https://github.com/stm32-rs/stm32f3xx-hal?branch=master#565b43ceab7b8255c122e82f4f1f1f2b3e85f11b"
 dependencies = [
  "bare-metal 1.0.0",
  "bxcan",
@@ -501,9 +501,9 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "syn"
-version = "1.0.86"
+version = "1.0.88"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a65b3f4ffa0092e9887669db0eae07941f023991ab58ea44da8fe8e2d511c6b"
+checksum = "ebd69e719f31e88618baa1eaa6ee2de5c9a1c004f1e9ecdb58e8352a13f20a01"
 dependencies = [
  "proc-macro2",
  "quote",

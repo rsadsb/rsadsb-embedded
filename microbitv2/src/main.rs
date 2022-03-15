@@ -28,8 +28,8 @@ use serial_setup::UartePort;
 
 const HEAP_SIZE: usize = 4096 * 2;
 
-const LAT: f64 = 0;
-const LONG: f64 = 0;
+const LAT: f64 = 0.0;
+const LONG: f64 = 0.0;
 
 // this is the allocator the application will use
 #[global_allocator]

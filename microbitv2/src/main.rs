@@ -86,7 +86,7 @@ fn main() -> ! {
                 Ok(frame) => {
                     adsb_airplanes.action(frame.1, (LAT, LONG));
                     let mut save_position = (None, 400.0);
-                    for (key, value) in &adsb_airplanes.0 {
+                    for (key, value) in adsb_airplanes.iter() {
                         // save smallest heading key
                         if let Some(kilo_distance) = value.coords.kilo_distance {
                             if kilo_distance < save_position.1 {
@@ -96,8 +96,7 @@ fn main() -> ! {
                     }
                     if save_position.0.is_some() {
                         let position = adsb_airplanes
-                            .0
-                            .get(save_position.0.unwrap())
+                            .get(*save_position.0.unwrap())
                             .unwrap()
                             .coords
                             .position;

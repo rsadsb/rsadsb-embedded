@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "adsb_deku"
 version = "0.5.1"
-source = "git+https://github.com/rsadsb/adsb_deku?branch=add-no-std-support#e5639e03e4bd1b07a806f390025a204285a13b04"
+source = "git+https://github.com/rsadsb/adsb_deku?branch=add-no-std-support#3b6b9d9e00935560de8900f20a5ae303efdd3915"
 dependencies = [
  "deku",
  "libm",
@@ -517,7 +517,7 @@ dependencies = [
 [[package]]
 name = "rsadsb_common"
 version = "0.5.1"
-source = "git+https://github.com/rsadsb/adsb_deku?branch=add-no-std-support#e5639e03e4bd1b07a806f390025a204285a13b04"
+source = "git+https://github.com/rsadsb/adsb_deku?branch=add-no-std-support#3b6b9d9e00935560de8900f20a5ae303efdd3915"
 dependencies = [
  "adsb_deku",
  "libm",

@@ -26,7 +26,7 @@ use rtt_target::{rprintln, rtt_init_print};
 mod serial_setup;
 use serial_setup::UartePort;
 
-const HEAP_SIZE: usize = 4096 * 2;
+const HEAP_SIZE: usize = 1024 * 5;
 
 const LAT: f64 = 0.0;
 const LONG: f64 = 0.0;
@@ -38,6 +38,7 @@ static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
 // define what happens in an Out Of Memory (OOM) condition
 #[alloc_error_handler]
 fn alloc_error(_layout: Layout) -> ! {
+    rprintln!("[!] alloc error");
     asm::bkpt();
 
     loop {}
@@ -131,6 +132,7 @@ fn main() -> ! {
                 }
                 Err(e) => rprintln!("[!] ERROR: {:?}", e),
             }
+            rprintln!("free: {}", ALLOCATOR.free());
             buffer.clear();
         }
     }

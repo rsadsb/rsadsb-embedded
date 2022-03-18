@@ -10,14 +10,14 @@ git = "https://github.com/nrf-rs/microbit/"
 [dependencies.adsb_deku]
 version = "*"
 git = "https://github.com/rsadsb/adsb_deku"
-branch = "add-no-std-support"
+branch = "master"
 default-features = false
 features = ["alloc"]
 
 [dependencies.rsadsb_common]
 version = "*"
 git = "https://github.com/rsadsb/adsb_deku"
-branch = "add-no-std-support"
+branch = "master"
 default-features = false
 features = ["alloc"]
 

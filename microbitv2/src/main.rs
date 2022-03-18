@@ -26,7 +26,7 @@ use rtt_target::{rprintln, rtt_init_print};
 mod serial_setup;
 use serial_setup::UartePort;
 
-const HEAP_SIZE: usize = 1024 * 5;
+const HEAP_SIZE: usize = 1024 * 100;
 
 const LAT: f64 = 0.0;
 const LONG: f64 = 0.0;
@@ -42,6 +42,37 @@ fn alloc_error(_layout: Layout) -> ! {
     asm::bkpt();
 
     loop {}
+}
+
+mod leds {
+    pub const TOP_RIGHT: [[u8; 5]; 5] = [
+        [0, 0, 1, 1, 1],
+        [0, 0, 0, 1, 1],
+        [0, 0, 1, 0, 1],
+        [0, 1, 0, 0, 0],
+        [1, 0, 0, 0, 0],
+    ];
+    pub const TOP_LEFT: [[u8; 5]; 5] = [
+        [1, 1, 1, 0, 0],
+        [1, 1, 0, 0, 0],
+        [1, 0, 1, 0, 0],
+        [0, 0, 0, 1, 0],
+        [0, 0, 0, 0, 1],
+    ];
+    pub const BOT_LEFT: [[u8; 5]; 5] = [
+        [0, 0, 0, 0, 1],
+        [0, 0, 0, 1, 0],
+        [1, 0, 1, 0, 0],
+        [1, 1, 0, 0, 0],
+        [1, 1, 1, 0, 0],
+    ];
+    pub const BOT_RIGHT: [[u8; 5]; 5] = [
+        [1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0],
+        [0, 0, 1, 0, 1],
+        [0, 0, 0, 1, 1],
+        [0, 0, 1, 1, 1],
+    ];
 }
 
 #[entry]
@@ -68,13 +99,6 @@ fn main() -> ! {
 
     let mut buffer: Vec<u8, 14> = Vec::new();
     loop {
-        let mut leds = [
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-        ];
         // We assume that the receiving cannot fail
         let byte = nb::block!(serial.read()).unwrap();
 
@@ -110,29 +134,24 @@ fn main() -> ! {
                             );
                             let (lat, long) = (position.latitude, position.longitude);
 
-                            let lat_g = lat > LAT;
-                            let long_g = long > LONG;
+                            let is_top = lat > LAT;
+                            let is_right = long > LONG;
 
-                            if lat_g && long_g {
-                                rprintln!("top right");
-                                leds[0][4] = 1;
-                            } else if lat_g && !long_g {
-                                rprintln!("bot right");
-                                leds[4][4] = 1;
-                            } else if !lat_g && long_g {
-                                rprintln!("bot left");
-                                leds[4][0] = 1;
-                            } else if !lat_g && !lat_g {
-                                rprintln!("top left");
-                                leds[0][0] = 1;
-                            }
+                            let leds = if is_top && is_right {
+                                leds::TOP_RIGHT
+                            } else if is_top && !is_right {
+                                leds::TOP_LEFT
+                            } else if !is_top && is_right {
+                                leds::BOT_RIGHT
+                            } else {
+                                leds::BOT_LEFT
+                            };
                             display.show(&mut timer, leds, 10);
                         }
                     }
                 }
                 Err(e) => rprintln!("[!] ERROR: {:?}", e),
             }
-            rprintln!("free: {}", ALLOCATOR.free());
             buffer.clear();
         }
     }

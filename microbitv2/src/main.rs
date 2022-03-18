@@ -152,6 +152,7 @@ fn main() -> ! {
                 }
                 Err(e) => rprintln!("[!] ERROR: {:?}", e),
             }
+            rprintln!("{}", ALLOCATOR.free());
             buffer.clear();
         }
     }

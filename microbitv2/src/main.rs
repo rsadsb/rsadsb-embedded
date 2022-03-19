@@ -6,11 +6,11 @@ use adsb_deku::deku::DekuContainerRead;
 use adsb_deku::Frame;
 use alloc_cortex_m::CortexMHeap;
 use core::alloc::Layout;
-use core::fmt::Write;
+
 use core::mem::MaybeUninit;
-use cortex_m::asm;
+use cortex_m::{peripheral::SCB};
 use cortex_m_rt::entry;
-use heapless::Vec;
+
 use microbit::{
     board::Board,
     display::blocking::Display,
@@ -36,10 +36,13 @@ const LONG: f64 = 0.0;
 static ALLOCATOR: CortexMHeap = CortexMHeap::empty();
 
 // define what happens in an Out Of Memory (OOM) condition
+//
+// Currently, this goes back to the reset vector. Which is _a_ solution, but not a good solution.
 #[alloc_error_handler]
 fn alloc_error(_layout: Layout) -> ! {
     rprintln!("[!] alloc error");
-    asm::bkpt();
+    SCB::sys_reset();
+    //asm::bkpt();
 
     loop {}
 }

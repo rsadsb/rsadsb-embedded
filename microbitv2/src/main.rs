@@ -97,16 +97,16 @@ fn main() -> ! {
 
     let mut display = Display::new(board.display_pins);
 
-    let mut buffer: Vec<u8, 14> = Vec::new();
+    let mut buffer: [u8; 16] = [0u8; 16];
     loop {
         // We assume that the receiving cannot fail
         let byte = nb::block!(serial.read()).unwrap();
 
-        if buffer.push(byte).is_err() {
-            write!(serial, "error: buffer full\r\n").unwrap();
-        }
+        buffer.rotate_left(1);
+        buffer[15] = byte;
 
-        if buffer.len() == 14 {
+        if buffer[14] == 0xff && buffer[15] == 0xff {
+            rprintln!("{:02x?}", buffer);
             match Frame::from_bytes((&buffer, 0)) {
                 Ok(frame) => {
                     adsb_airplanes.action(frame.1, (LAT, LONG));
@@ -153,7 +153,6 @@ fn main() -> ! {
                 Err(e) => rprintln!("[!] ERROR: {:?}", e),
             }
             rprintln!("{}", ALLOCATOR.free());
-            buffer.clear();
         }
     }
 }

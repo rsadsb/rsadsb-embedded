@@ -69,6 +69,8 @@ fn main() {
             }
 
             port.write_all(&bytes).unwrap();
+            port.write(&[0xff]).unwrap();
+            port.write(&[0xff]).unwrap();
             std::thread::sleep(std::time::Duration::from_millis(50));
 
             input.clear();

@@ -6,11 +6,11 @@ use adsb_deku::deku::DekuContainerRead;
 use adsb_deku::Frame;
 use alloc_cortex_m::CortexMHeap;
 use core::alloc::Layout;
-
+use core::fmt::Write;
 use core::mem::MaybeUninit;
-use cortex_m::{peripheral::SCB};
+use cortex_m::{asm, peripheral::SCB};
 use cortex_m_rt::entry;
-
+use heapless::Vec;
 use microbit::{
     board::Board,
     display::blocking::Display,
@@ -77,6 +77,7 @@ mod leds {
         [0, 0, 1, 1, 1],
     ];
 }
+
 
 #[entry]
 fn main() -> ! {

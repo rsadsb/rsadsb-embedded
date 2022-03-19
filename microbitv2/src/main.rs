@@ -78,7 +78,6 @@ mod leds {
     ];
 }
 
-
 #[entry]
 fn main() -> ! {
     rtt_init_print!();

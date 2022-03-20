@@ -34,7 +34,7 @@ fn main() {
     let options = Options::parse();
 
     let mut port = serialport::new("/dev/ttyACM0", 115200)
-        .timeout(Duration::from_millis(10))
+        .timeout(Duration::from_secs(1))
         .data_bits(DataBits::Eight)
         .parity(Parity::None)
         .stop_bits(StopBits::One)

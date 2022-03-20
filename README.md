@@ -14,6 +14,8 @@ cargo r
 ## bbc microbit-v2
 Display the current position of the closest plane on the led array.
 
+![microbitv2 example](media/microbitv2_03_20_22.gif)
+
 ### Usage
 You must install [cargo-embed](https://github.com/probe-rs/cargo-embed) for the flashing of the board with our firmware.
 

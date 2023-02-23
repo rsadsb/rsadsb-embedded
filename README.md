@@ -36,7 +36,7 @@ Using serial line on the board, show ADS-B packets on the rtt(real-time-terminal
 
 
 ### Usage
-You must install [cargo-embed](https://github.com/probe-rs/cargo-embed) for the flashing of the board with our firmware.
+You must install [cargo-embed](https://github.com/probe-rs/probe-rs/tree/master/cargo-embed) for the flashing of the board with our firmware.
 
 ```
 cd stm32f3discovery
